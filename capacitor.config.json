@@ -1,0 +1,12 @@
+{
+  "appId": "io.github.limoai_collab.native",
+  "appName": "Limo ai",
+  "webDir": "www",
+  "server": {
+    "url": "https://limoai-collab.github.io/Limo-ai-/",
+    "allowNavigation": ["limoai-collab.github.io"]
+  },
+  "android": {
+    "backgroundColor": "#0f1222"
+  }
+}
