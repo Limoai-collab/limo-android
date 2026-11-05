@@ -30,6 +30,18 @@ jobs:
           cp icon-only.png icon-foreground.png icon-background.png assets/
           npx @capacitor/assets generate --android
 
+      - name: App links and version
+        run: |
+          python3 - <<'PY'
+          p = 'android/app/src/main/AndroidManifest.xml'
+          s = open(p, encoding='utf-8').read()
+          f = '<intent-filter android:autoVerify="true"><action android:name="android.intent.action.VIEW" /><category android:name="android.intent.category.DEFAULT" /><category android:name="android.intent.category.BROWSABLE" /><data android:scheme="https" android:host="limoai-collab.github.io" android:pathPrefix="/Limo-ai-/" /></intent-filter></activity>'
+          assert '</activity>' in s
+          s = s.replace('</activity>', f, 1)
+          open(p, 'w', encoding='utf-8').write(s)
+          PY
+          sed -i 's/versionCode 1/versionCode 2/; s/versionName "1.0"/versionName "2.0"/' android/app/build.gradle
+
       - name: Sync
         run: npx cap sync android
 
