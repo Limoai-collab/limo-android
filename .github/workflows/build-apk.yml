@@ -1,4 +1,4 @@
-name: Build Android APK
+herename: Build Android APK
 
 on:
   workflow_dispatch:
@@ -41,6 +41,22 @@ jobs:
           open(p, 'w', encoding='utf-8').write(s)
           PY
           sed -i 's/versionCode 1/versionCode 2/; s/versionName "1.0"/versionName "2.0"/' android/app/build.gradle
+
+      - name: Keep content below status bar
+        run: |
+          python3 - <<'PY'
+          import re
+          p = 'android/app/src/main/res/values/styles.xml'
+          s = open(p, encoding='utf-8').read()
+          items = '<item name="android:windowOptOutEdgeToEdgeEnforcement">true</item><item name="android:statusBarColor">#0f1222</item><item name="android:navigationBarColor">#0f1222</item>'
+          n = 0
+          for name in ('AppTheme.NoActionBar', 'AppTheme.NoActionBarLaunch'):
+              pat = re.compile(r'(<style\s+name="' + re.escape(name) + r'"[^>]*>)')
+              s, c = pat.subn(lambda m: m.group(1) + items, s, count=1)
+              n += c
+          assert n >= 1
+          open(p, 'w', encoding='utf-8').write(s)
+          PY
 
       - name: Sync
         run: npx cap sync android
